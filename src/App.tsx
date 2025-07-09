@@ -146,10 +146,10 @@ function App() {
           new URL('./assets/images/baan-khun-film/5.jpg', import.meta.url).href,
           new URL('./assets/images/baan-khun-film/6.jpg', import.meta.url).href,
         ],
-        title: 'Baan Khun Film',
+        title: 'Residence Rangsit',
         location: 'Phathumthani, Thailand',
         year: '2025',
-        description: 'Area : 530 sq.m,Owner : Khun Film,Design  : 4504 Architect studio,Struction : T84 Construction.',
+        description: 'Area : 530 sq.m,Design  : 4504 Architect studio,Struction : T84 Construction.',
         status: 'IN_PROCESS'
       },
       { 
@@ -169,10 +169,10 @@ function App() {
           bn9Image13,
           bn9Image14,
         ],
-        title: 'BN9',
+        title: 'Residence BN9',
         location: 'Bangkok, Thailand',
         year: '2025',
-        description: 'Area : 883 sq.m,Owner : Khun Tong,Design  : ONE AND A HALF ARCHITECT CO.LTD,Struction : T84 Construction.',
+        description: 'Area : 883 sq.m,Design  : ONE AND A HALF ARCHITECT CO.LTD,Struction : T84 Construction.',
         status: 'IN_PROCESS'
       },
       { 
@@ -192,10 +192,10 @@ function App() {
           new URL('./assets/images/Ladkrabang/12.jpg', import.meta.url).href,
           new URL('./assets/images/Ladkrabang/13.jpg', import.meta.url).href,
         ],
-        title: 'Project Ladkrabang',
+        title: 'Residence Ladkrabang',
         location: 'Ladkrabang, Thailand',
         year: '2025',
-        description: 'Area : 1080 sq.m,Owner : Khun Fiare,Struction : T84 Construction.',
+        description: 'Area : 1080 sq.m,Struction : T84 Construction.',
         status: 'IN_PROCESS'
       },
       { 
@@ -222,10 +222,10 @@ function App() {
         images: [
           new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
         ],
-        title: 'Rama Nine',
+        title: 'Residence Rama Nine',
         location: 'Rama Nine, Thailand',
         year: '2025',
-        description: 'Area : 288 sq.m,Owner : Khun Preaw,Design  : ONE AND A HALF CO.LTD,Struction : T84 Construction.',
+        description: 'Area : 288 sq.m,Design  : ONE AND A HALF CO.LTD,Struction : T84 Construction.',
         status: 'IN_PROCESS'
       },
       { 
@@ -241,7 +241,7 @@ function App() {
           new URL('./assets/images/Pakchong/7 (2).jpg', import.meta.url).href,
           new URL('./assets/images/Pakchong/9 (2).jpg', import.meta.url).href,
         ],
-        title: 'Pakchong',
+        title: 'Residence Pakchong',
         location: 'Rama Nine, Thailand',
         year: '2025',
         description: 'Area : 680 sq.m,Owner : Khun Nok,Design  : ขาล,Struction : T84 Construction.',
@@ -254,10 +254,10 @@ function App() {
         images: [
           new URL('./assets/images/Ohm/1.jpg', import.meta.url).href,
         ],
-        title: 'Pattanakarn',
+        title: 'Renovate Pattanakarn',
         location: 'Pattanakarn, Thailand',
         year: '2025',
-        description: 'Area : 192 sq.m,Owner : Khun Ohm,Struction : T84 Construction.',
+        description: 'Area : 192 sq.m, T84 Construction.',
         status: 'FINISHED'
       },
       { 
@@ -265,10 +265,10 @@ function App() {
         images: [
           new URL('./assets/images/Omakase/1.jpg', import.meta.url).href,
         ],
-        title: 'Omakase',
+        title: 'Renovate Omakase',
         location: 'Onnut, Thailand',
         year: '2025',
-        description: 'Area : 50 sq.m,Owner : Khun Ponzu,Design  : T84 Construction,Struction : T84 Construction.',
+        description: 'Area : 50 sq.m,Design  : T84 Construction,Struction : T84 Construction.',
         status: 'FINISHED'
       },
       { 
@@ -281,7 +281,7 @@ function App() {
           new URL('./assets/images/Auto/5.jpg', import.meta.url).href,
           new URL('./assets/images/Auto/6.jpg', import.meta.url).href,
         ],
-        title: 'Autoworks',
+        title: 'Renovate Autowerks Asia Rama4',
         location: 'Rama 4, Bangkok',
         year: '2022',
         description: 'Area : 100 sq.m,Owner : Autowroks Asia Bangkok,Design  : T84 Construction,Struction : T84 Construction.',
