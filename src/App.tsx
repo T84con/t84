@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Plane as Crane, Building2, Users, Phone, HardHat, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Linkedin, Menu, X, Home, Settings, FolderOpen, Info } from 'lucide-react';
 import heroBackground from './assets/images/hero/background.jpg';
 import { Helmet } from 'react-helmet';
 import ProjectPage from './components/ProjectPage';
+import emailjs from '@emailjs/browser';
 
 // BN9 Project Images
 import bn9Image1 from './assets/images/BN9/1.png';
@@ -36,16 +37,76 @@ function App() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    console.log('Input change detected:', { name, value });
+    
+    // Map form field names to state property names
+    const fieldNameMap: Record<string, keyof typeof formData> = {
+      'user_name': 'name',
+      'user_email': 'email',
+      'user_phone': 'phone',
+      'message': 'projectDetails'
+    };
+    
+    const stateKey = fieldNameMap[name] || name;
+    console.log('Using state key:', stateKey);
+    
+    setFormData(prev => {
+      const newState = {
+        ...prev,
+        [stateKey]: value
+      };
+      console.log('New form state:', newState);
+      return newState;
+    });
   };
+
+  const form = useRef<HTMLFormElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
+    console.log('Form submitted');
+    
+    // Set loading state
+    setIsMessageSent(true);
+    
+    // Send email using EmailJS
+    if (form.current) {
+      console.log('Form reference exists, sending email...');
+      
+      // Log form data for debugging
+      const formElement = form.current as HTMLFormElement;
+      const formData = new FormData(formElement);
+      console.log('Form data:', Object.fromEntries(formData.entries()));
+      
+      // EmailJS configuration
+      // IMPORTANT: Make sure you have created a template in EmailJS with variables:
+      // {{user_name}}, {{user_email}}, {{user_phone}}, {{message}}, and {{to_email}}
+      emailjs.sendForm(
+        'service_kb2z4ar', // Your EmailJS service ID - this looks correct
+        'template_bysyot9', // ERROR: You MUST replace this with your actual template ID from EmailJS dashboard
+        form.current,
+        'rrXiMhXAGaSua329z' // Your EmailJS public key - this looks correct
+      )
+      .then((result) => {
+        console.log('Email sent successfully:', result.text);
+        
+        // Reset form
+        formElement.reset();
+        
+        // Keep success message visible for 3 seconds
+        setTimeout(() => {
+          setIsMessageSent(false);
+        }, 3000);
+      })
+      .catch((error) => {
+        console.error('Failed to send email:', error.text);
+        setIsMessageSent(false);
+        alert('Failed to send email. Please try again later.');
+      });
+    } else {
+      console.error('Form reference is null');
+      setIsMessageSent(false);
+    }
   };
 
   useEffect(() => {
@@ -76,14 +137,14 @@ function App() {
   const projectCategories = {
     BUILD: [
       { 
-        img: 'src/assets/images/baan-khun-film/1.jpg',
+        img: new URL('./assets/images/baan-khun-film/1.jpg', import.meta.url).href,
         images: [
-          'src/assets/images/baan-khun-film/1.jpg',
-          'src/assets/images/baan-khun-film/2.jpg',
-          'src/assets/images/baan-khun-film/3.jpg',
-          'src/assets/images/baan-khun-film/4.jpg',
-          'src/assets/images/baan-khun-film/5.jpg',
-          'src/assets/images/baan-khun-film/6.jpg',
+          new URL('./assets/images/baan-khun-film/1.jpg', import.meta.url).href,
+          new URL('./assets/images/baan-khun-film/2.jpg', import.meta.url).href,
+          new URL('./assets/images/baan-khun-film/3.jpg', import.meta.url).href,
+          new URL('./assets/images/baan-khun-film/4.jpg', import.meta.url).href,
+          new URL('./assets/images/baan-khun-film/5.jpg', import.meta.url).href,
+          new URL('./assets/images/baan-khun-film/6.jpg', import.meta.url).href,
         ],
         title: 'Baan Khun Film',
         location: 'Phathumthani, Thailand',
@@ -115,21 +176,21 @@ function App() {
         status: 'IN_PROCESS'
       },
       { 
-        img: 'src/assets/images/Ladkrabang/1.jpg',
+        img: new URL('./assets/images/Ladkrabang/1.jpg', import.meta.url).href,
         images: [
-          'src/assets/images/Ladkrabang/1.jpg',
-         'src/assets/images/Ladkrabang/2.jpg',
-         'src/assets/images/Ladkrabang/3.jpg',
-         'src/assets/images/Ladkrabang/4.jpg',
-         'src/assets/images/Ladkrabang/5.jpg',
-         'src/assets/images/Ladkrabang/6.jpg',
-        'src/assets/images/Ladkrabang/7.jpg',
-        'src/assets/images/Ladkrabang/8.jpg',
-        'src/assets/images/Ladkrabang/9.jpg',
-        'src/assets/images/Ladkrabang/10.jpg',
-        'src/assets/images/Ladkrabang/11.jpg',
-        'src/assets/images/Ladkrabang/12.jpg',
-        'src/assets/images/Ladkrabang/13.jpg',
+          new URL('./assets/images/Ladkrabang/1.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/2.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/3.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/4.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/5.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/6.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/7.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/8.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/9.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/10.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/11.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/12.jpg', import.meta.url).href,
+          new URL('./assets/images/Ladkrabang/13.jpg', import.meta.url).href,
         ],
         title: 'Project Ladkrabang',
         location: 'Ladkrabang, Thailand',
@@ -138,16 +199,17 @@ function App() {
         status: 'IN_PROCESS'
       },
       { 
-        img: 'src/assets/images/Croco/2.jpg',
-        images: ['src/assets/images/Croco/2.jpg',
-        'src/assets/images/Croco/3.jpg',
-        'src/assets/images/Croco/4.jpg',
-        'src/assets/images/Croco/5.jpg',
-        'src/assets/images/Croco/6.jpg',
-        'src/assets/images/Croco/7.jpg',
-        'src/assets/images/Croco/8.jpg',
-        'src/assets/images/Croco/9.jpg',
-        'src/assets/images/Croco/10.jpg',
+        img: new URL('./assets/images/Croco/2.jpg', import.meta.url).href,
+        images: [
+          new URL('./assets/images/Croco/2.jpg', import.meta.url).href,
+          new URL('./assets/images/Croco/3.jpg', import.meta.url).href,
+          new URL('./assets/images/Croco/4.jpg', import.meta.url).href,
+          new URL('./assets/images/Croco/5.jpg', import.meta.url).href,
+          new URL('./assets/images/Croco/6.jpg', import.meta.url).href,
+          new URL('./assets/images/Croco/7.jpg', import.meta.url).href,
+          new URL('./assets/images/Croco/8.jpg', import.meta.url).href,
+          new URL('./assets/images/Croco/9.jpg', import.meta.url).href,
+          new URL('./assets/images/Croco/10.jpg', import.meta.url).href,
         ],
         title: 'Croco Office',
         location: 'Rama Nine, Thailand',
@@ -156,9 +218,9 @@ function App() {
         status: 'IN_PROCESS'
       },
       { 
-        img: 'src/assets/images/rama9/1.jpg',
+        img: new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
         images: [
-          'src/assets/images/rama9/1.jpg',
+          new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
         ],
         title: 'Rama Nine',
         location: 'Rama Nine, Thailand',
@@ -167,17 +229,17 @@ function App() {
         status: 'IN_PROCESS'
       },
       { 
-        img: 'src/assets/images/Pakchong/1.jpg',
+        img: new URL('./assets/images/Pakchong/1.jpg', import.meta.url).href,
         images: [
-          'src/assets/images/Pakchong/1.jpg',
-          'src/assets/images/Pakchong/2 (2).jpg',
-        'src/assets/images/Pakchong/2.jpg',
-        'src/assets/images/Pakchong/1 (4).jpg',
-        'src/assets/images/Pakchong/3 (2).jpg',
-        'src/assets/images/Pakchong/4 (2).jpg',
-        'src/assets/images/Pakchong/5 (2).jpg',
-        'src/assets/images/Pakchong/7 (2).jpg',
-        'src/assets/images/Pakchong/9 (2).jpg',
+          new URL('./assets/images/Pakchong/1.jpg', import.meta.url).href,
+          new URL('./assets/images/Pakchong/2 (2).jpg', import.meta.url).href,
+          new URL('./assets/images/Pakchong/2.jpg', import.meta.url).href,
+          new URL('./assets/images/Pakchong/1 (4).jpg', import.meta.url).href,
+          new URL('./assets/images/Pakchong/3 (2).jpg', import.meta.url).href,
+          new URL('./assets/images/Pakchong/4 (2).jpg', import.meta.url).href,
+          new URL('./assets/images/Pakchong/5 (2).jpg', import.meta.url).href,
+          new URL('./assets/images/Pakchong/7 (2).jpg', import.meta.url).href,
+          new URL('./assets/images/Pakchong/9 (2).jpg', import.meta.url).href,
         ],
         title: 'Pakchong',
         location: 'Rama Nine, Thailand',
@@ -188,9 +250,9 @@ function App() {
     ],
     RENOVATE: [
       { 
-        img: 'src/assets/images/Ohm/1.jpg',
+        img: new URL('./assets/images/Ohm/1.jpg', import.meta.url).href,
         images: [
-          'src/assets/images/Ohm/1.jpg',
+          new URL('./assets/images/Ohm/1.jpg', import.meta.url).href,
         ],
         title: 'Pattanakarn',
         location: 'Pattanakarn, Thailand',
@@ -199,9 +261,9 @@ function App() {
         status: 'FINISHED'
       },
       { 
-        img: 'src/assets/images/Omakase/1.jpg',
+        img: new URL('./assets/images/Omakase/1.jpg', import.meta.url).href,
         images: [
-          'src/assets/images/Omakase/1.jpg',
+          new URL('./assets/images/Omakase/1.jpg', import.meta.url).href,
         ],
         title: 'Omakase',
         location: 'Onnut, Thailand',
@@ -210,14 +272,14 @@ function App() {
         status: 'FINISHED'
       },
       { 
-        img: 'src/assets/images/Auto/1.jpg',
+        img: new URL('./assets/images/Auto/1.jpg', import.meta.url).href,
         images: [
-          'src/assets/images/Auto/1.jpg',
-         'src/assets/images/Auto/2.jpg',
-         'src/assets/images/Auto/3.jpg',
-         'src/assets/images/Auto/4.jpg',
-         'src/assets/images/Auto/5.jpg',
-         'src/assets/images/Auto/6.jpg',
+          new URL('./assets/images/Auto/1.jpg', import.meta.url).href,
+          new URL('./assets/images/Auto/2.jpg', import.meta.url).href,
+          new URL('./assets/images/Auto/3.jpg', import.meta.url).href,
+          new URL('./assets/images/Auto/4.jpg', import.meta.url).href,
+          new URL('./assets/images/Auto/5.jpg', import.meta.url).href,
+          new URL('./assets/images/Auto/6.jpg', import.meta.url).href,
         ],
         title: 'Autoworks',
         location: 'Rama 4, Bangkok',
@@ -249,7 +311,7 @@ function App() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
-              <img src="/src/assets/logo/t84.jpg" alt="T84 Construction Logo" className="h-10 w-auto object-contain" />
+              <img src={new URL('./assets/logo/t84.jpg', import.meta.url).href} alt="T84 Construction Logo" className="h-10 w-auto object-contain" />
               <span className="text-xl font-bold">T84 CONSTRUCTION</span>
             </div>
             
@@ -453,7 +515,7 @@ Over the past 10 years, the company has accumulated extensive experience and exp
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 bg-gray-50">
+      <section id="contact" className="py-20 bg-gray-50 relative z-[60]">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16">
             {/* Contact Information */}
@@ -540,16 +602,23 @@ Over the past 10 years, the company has accumulated extensive experience and exp
             <div>
               <div className="bg-white rounded-xl shadow-lg p-10">
                 <h3 className="text-2xl font-bold mb-8">Start Your Project</h3>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                {isMessageSent ? (
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+                    <strong className="font-bold">Success! </strong>
+                    <span className="block sm:inline">Your message has been sent to t84con@gmail.com. We'll get back to you soon!</span>
+                  </div>
+                ) : null}
+                <form ref={form} onSubmit={handleSubmit} className="space-y-6 relative z-[70]">
+                  {/* Hidden field for recipient email */}
+                  <input type="hidden" name="to_email" value="t84con@gmail.com" />
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Name</label>
                   <input
                       id="name"
-                      name="name"
-                    type="text"
+                      name="user_name"
+                      type="text"
                       required
-                      value={formData.name}
-                      onChange={handleInputChange}
+                      defaultValue={formData.name}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-200"
                       aria-label="Your name"
                   />
@@ -558,11 +627,10 @@ Over the past 10 years, the company has accumulated extensive experience and exp
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                 <input
                       id="email"
-                      name="email"
-                  type="email"
+                      name="user_email"
+                      type="email"
                       required
-                      value={formData.email}
-                      onChange={handleInputChange}
+                      defaultValue={formData.email}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-200"
                       aria-label="Your email address"
                     />
@@ -571,11 +639,10 @@ Over the past 10 years, the company has accumulated extensive experience and exp
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                 <input
                       id="phone"
-                      name="phone"
-                  type="tel"
+                      name="user_phone"
+                      type="tel"
                       required
-                      value={formData.phone}
-                      onChange={handleInputChange}
+                      defaultValue={formData.phone}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-200"
                       aria-label="Your phone number"
                     />
@@ -584,21 +651,21 @@ Over the past 10 years, the company has accumulated extensive experience and exp
                     <label htmlFor="projectDetails" className="block text-sm font-medium text-gray-700 mb-2">Project Details</label>
                 <textarea
                       id="projectDetails"
-                      name="projectDetails"
+                      name="message"
                       rows={5}
                       required
-                      value={formData.projectDetails}
-                      onChange={handleInputChange}
+                      defaultValue={formData.projectDetails}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none transition-all duration-200"
                       aria-label="Your project details"
                 ></textarea>
                   </div>
                 <button
                   type="submit"
-                    className="w-full bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-base"
-                    aria-label="Send message"
+                  disabled={isMessageSent}
+                  className={`w-full px-8 py-4 rounded-lg font-semibold text-base transition-colors ${isMessageSent ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                  aria-label="Send message"
                 >
-                  Send Message
+                  {isMessageSent ? 'Message Sent' : 'Send Message'}
                 </button>
               </form>
               </div>
