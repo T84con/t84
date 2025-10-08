@@ -137,6 +137,38 @@ function App() {
   const projectCategories = {
     BUILD: [
       { 
+        img: new URL('./assets/images/Laan/1.jpg', import.meta.url).href,
+        images: [
+          new URL('./assets/images/Laan/1.jpg', import.meta.url).href,
+          new URL('./assets/images/Laan/2.jpg', import.meta.url).href,
+          new URL('./assets/images/Laan/3.jpg', import.meta.url).href,
+        ],
+        title: 'Residence LaanLom',
+        location: ' Bangkok, Thailand',
+        year: '2025',
+        description: `
+          Area : 700 sq.m
+          Architects : Puen-din Architects
+          Construction : T84 Construction
+        `,
+        status: 'IN_PROCESS'
+      },
+      { 
+        img: new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
+        images: [
+          new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
+        ],
+        title: 'Residence SR11 Rama Nine',
+        location: 'Bangkok, Thailand',
+        year: '2025',
+        description: `
+          Area : 288 sq.m
+          Architects : ONE AND A HALF CO.LTD
+          Construction : T84 Construction
+        `,
+        status: 'IN_PROCESS'
+      },
+      { 
         img: new URL('./assets/images/baan-khun-film/1.jpg', import.meta.url).href,
         images: [
           new URL('./assets/images/baan-khun-film/1.jpg', import.meta.url).href,
@@ -149,7 +181,11 @@ function App() {
         title: 'Residence Rangsit',
         location: 'Phathumthani, Thailand',
         year: '2025',
-        description: 'Area : 530 sq.m,Design  : 4504 Architect studio,Struction : T84 Construction.',
+        description: `
+          Area : 530 sq.m
+          Architects : 4504 Architect studio
+          Construction : T84 Construction
+        `,
         status: 'IN_PROCESS'
       },
       { 
@@ -172,7 +208,11 @@ function App() {
         title: 'Residence BN9',
         location: 'Bangkok, Thailand',
         year: '2025',
-        description: 'Area : 883 sq.m,Design  : ONE AND A HALF ARCHITECT CO.LTD,Struction : T84 Construction.',
+        description: `
+          Area : 883 sq.m
+          Architects : ONE AND A HALF ARCHITECT CO.LTD
+          Construction : T84 Construction
+        `,
         status: 'IN_PROCESS'
       },
       { 
@@ -195,7 +235,10 @@ function App() {
         title: 'Residence Ladkrabang',
         location: 'Ladkrabang, Thailand',
         year: '2025',
-        description: 'Area : 1080 sq.m,Struction : T84 Construction.',
+        description: `
+          Area : 1080 sq.m
+          Construction : T84 Construction
+        `,
         status: 'IN_PROCESS'
       },
       { 
@@ -214,19 +257,13 @@ function App() {
         title: 'Croco Office',
         location: 'Rama Nine, Thailand',
         year: '2025',
-        description: 'Area : 115 sq.m,Owner : Croco International,Design  : T84 Construction,Struction : T84 Construction.',
-        status: 'IN_PROCESS'
-      },
-      { 
-        img: new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
-        ],
-        title: 'Residence Rama Nine',
-        location: 'Rama Nine, Thailand',
-        year: '2025',
-        description: 'Area : 288 sq.m,Design  : ONE AND A HALF CO.LTD,Struction : T84 Construction.',
-        status: 'IN_PROCESS'
+        description: `
+          Area : 115 sq.m
+          Owner : Croco International
+          Architects : T84 Construction
+          Construction : T84 Construction
+        `,
+        status: 'FINISHED'
       },
       { 
         img: new URL('./assets/images/Pakchong/1.jpg', import.meta.url).href,
@@ -244,9 +281,14 @@ function App() {
         title: 'Residence Pakchong',
         location: 'Rama Nine, Thailand',
         year: '2025',
-        description: 'Area : 680 sq.m,Owner : Khun Nok,Design  : ขาล,Struction : T84 Construction.',
+        description: `
+          Area : 680 sq.m
+          Architects : ขาล
+          Construction : T84 Construction
+        `,
         status: 'FINISHED'
       },
+      
     ],
     RENOVATE: [
       { 
@@ -257,7 +299,10 @@ function App() {
         title: 'Renovate Pattanakarn',
         location: 'Pattanakarn, Thailand',
         year: '2025',
-        description: 'Area : 192 sq.m, T84 Construction.',
+        description: `
+          Area : 192 sq.m
+          Construction : T84 Construction
+        `,
         status: 'FINISHED'
       },
       { 
@@ -268,7 +313,11 @@ function App() {
         title: 'Renovate Omakase',
         location: 'Onnut, Thailand',
         year: '2025',
-        description: 'Area : 50 sq.m,Design  : T84 Construction,Struction : T84 Construction.',
+        description: `
+          Area : 50 sq.m
+          Architects : T84 Construction
+          Construction: T84 Construction
+        `,
         status: 'FINISHED'
       },
       { 
@@ -284,7 +333,12 @@ function App() {
         title: 'Renovate Autowerks Asia Rama4',
         location: 'Rama 4, Bangkok',
         year: '2022',
-        description: 'Area : 100 sq.m,Owner : Autowroks Asia Bangkok,Design  : T84 Construction,Struction : T84 Construction.',
+        description: `
+          Area : 100 sq.m
+          Owner : Autowroks Asia Bangkok
+          Architects : T84 Construction
+          Construction : T84 Construction
+        `,
         status: 'FINISHED'
       },
     ],
@@ -473,7 +527,7 @@ function App() {
                           {project.year}
                         </div>
                       </div>
-                      <p className="text-gray-600 line-clamp-2">{project.description}</p>
+                      <p className="text-gray-600 whitespace-pre-line">{project.description}</p>
                     </div>
                   </div>
                 ))}
@@ -718,10 +772,10 @@ Over the past 10 years, the company has accumulated extensive experience and exp
             <div>
               <h4 className="text-white font-semibold mb-4">Connect With Us</h4>
               <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <a href="https://www.facebook.com/profile.php?id=100063487839667&locale=th_TH" className="text-gray-400 hover:text-blue-600 transition-colors">
                   <Facebook className="h-5 w-5" />
                 </a>
-                <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <a href="https://www.instagram.com/t84construction?igsh=MTE1cG55ZjB1ZmowMQ%3D%3D&utm_source=qr" className="text-gray-400 hover:text-blue-600 transition-colors">
                   <Instagram className="h-5 w-5" />
                 </a>
               </div>
