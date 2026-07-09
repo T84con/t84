@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MapPin, Clock, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ProjectPageProps {
@@ -16,7 +16,33 @@ interface ProjectPageProps {
 
 const ProjectPage: React.FC<ProjectPageProps> = ({ project, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const images = project.images || [project.img];
+  const [imageOrientations, setImageOrientations] = useState<Record<number, 'portrait' | 'landscape'>>({});
+  const images = useMemo(() => project.images || [project.img], [project.images, project.img]);
+  const isPortrait = imageOrientations[currentImageIndex] === 'portrait';
+
+  useEffect(() => {
+    const original = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, []);
+
+  useEffect(() => {
+    setCurrentImageIndex(0);
+    setImageOrientations({});
+
+    images.forEach((src, index) => {
+      const img = new Image();
+      img.onload = () => {
+        setImageOrientations((prev) => ({
+          ...prev,
+          [index]: img.naturalHeight > img.naturalWidth ? 'portrait' : 'landscape',
+        }));
+      };
+      img.src = src;
+    });
+  }, [images]);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -26,8 +52,16 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ project, onClose }) => {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  const handleImageLoad = (index: number, event: React.SyntheticEvent<HTMLImageElement>) => {
+    const { naturalWidth, naturalHeight } = event.currentTarget;
+    setImageOrientations((prev) => ({
+      ...prev,
+      [index]: naturalHeight > naturalWidth ? 'portrait' : 'landscape',
+    }));
+  };
+
   return (
-    <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-white z-[120] overflow-y-auto">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Back Button */}
         <button
@@ -40,8 +74,8 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ project, onClose }) => {
 
         {/* Project Header */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">{project.title}</h1>
-          <div className="flex items-center gap-6">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-4">{project.title}</h1>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <div className="flex items-center gap-2">
               <MapPin className="h-5 w-5 text-gray-400" />
               <span className="text-gray-600">{project.location}</span>
@@ -59,11 +93,16 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ project, onClose }) => {
         </div>
 
         {/* Project Image Slider */}
-        <div className="relative aspect-video w-full overflow-hidden rounded-xl mb-12 group">
+        <div
+          className={`relative w-full overflow-hidden rounded-xl mb-12 group bg-gray-100 transition-all duration-500 ${
+            isPortrait ? 'aspect-[3/4] max-w-md mx-auto' : 'aspect-video'
+          }`}
+        >
           <img
             src={images[currentImageIndex]}
             alt={`${project.title} - Image ${currentImageIndex + 1}`}
-            className="w-full h-full object-cover transition-transform duration-500"
+            className="w-full h-full object-contain transition-transform duration-500"
+            onLoad={(event) => handleImageLoad(currentImageIndex, event)}
           />
           
           {/* Navigation Arrows */}
@@ -71,13 +110,15 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ project, onClose }) => {
             <>
               <button
                 onClick={prevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                aria-label="Previous image"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"
               >
                 <ChevronLeft className="h-6 w-6" />
               </button>
               <button
                 onClick={nextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                aria-label="Next image"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"
               >
                 <ChevronRight className="h-6 w-6" />
               </button>
@@ -85,15 +126,21 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ project, onClose }) => {
           )}
           
           {/* Pagination Indicators */}
-          {images.length > 1 && (
+          {images.length > 1 && images.length <= 8 && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               {images.map((_, index) => (
                 <button
                   key={index}
+                  aria-label={`Go to image ${index + 1}`}
                   onClick={() => setCurrentImageIndex(index)}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentImageIndex ? 'bg-white w-4' : 'bg-white/60'}`}
                 />
               ))}
+            </div>
+          )}
+          {images.length > 8 && (
+            <div className="absolute bottom-4 right-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full">
+              {currentImageIndex + 1} / {images.length}
             </div>
           )}
         </div>

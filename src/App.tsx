@@ -1,125 +1,309 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Plane as Crane, Building2, Users, Phone, HardHat, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Linkedin, Menu, X, Home, Settings, FolderOpen, Info } from 'lucide-react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { Plane as Crane, Building2, Users, Phone, MapPin, Clock, Facebook, Instagram, Menu, X, Home, Settings, FolderOpen, Info } from 'lucide-react';
 import heroBackground from './assets/images/hero/background.jpg';
+import aboutImage from './assets/images/aboutImage/bg.jpg';
 import { Helmet } from 'react-helmet';
 import ProjectPage from './components/ProjectPage';
 import emailjs from '@emailjs/browser';
 
 // BN9 Project Images
 import bn9Image1 from './assets/images/BN9/1.png';
-import bn9Image2 from './assets/images/BN9/2.jpg';
-import bn9Image3 from './assets/images/BN9/3.jpg';
-import bn9Image5 from './assets/images/BN9/5.jpg';
-import bn9Image6 from './assets/images/BN9/6.jpg';
-import bn9Image7 from './assets/images/BN9/7.jpg';
-import bn9Image8 from './assets/images/BN9/8.jpg';
-import bn9Image9 from './assets/images/BN9/9.jpg';
-import bn9Image10 from './assets/images/BN9/10.jpg';
-import bn9Image11 from './assets/images/BN9/11.jpg';
-import bn9Image12 from './assets/images/BN9/12.jpg';
-import bn9Image13 from './assets/images/BN9/13.jpg';
-import bn9Image14 from './assets/images/BN9/14.jpg';
+
+const bn9GalleryImages = Object.entries(
+  import.meta.glob('./assets/images/BN9/new/*.{jpg,jpeg,png}', { eager: true, import: 'default' })
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, url]) => url as string);
+
+const samutPrakanImages = Object.entries(
+  import.meta.glob('./assets/images/SamutPrakan/*.png', { eager: true, import: 'default' })
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, url]) => url as string);
+
+type ProjectStatus = 'FINISHED' | 'IN_PROCESS';
+type ProjectCategory = 'BUILD' | 'RENOVATE' | 'DESIGN';
+
+interface Project {
+  img: string;
+  images: string[];
+  title: string;
+  location: string;
+  year: string;
+  description: string;
+  status: ProjectStatus;
+}
+
+const projectCategories: Record<ProjectCategory, Project[]> = {
+  BUILD: [
+    {
+      img: samutPrakanImages[0],
+      images: samutPrakanImages,
+      title: 'Residence Samut Prakan',
+      location: 'Samut Prakan, Thailand',
+      year: '2026',
+      description: `
+          Area : 650 sq.m
+          Architects : TEM Architects
+          Construction : T84 Construction
+        `,
+      status: 'IN_PROCESS'
+    },
+    {
+      img: new URL('./assets/images/Laan/1.jpg', import.meta.url).href,
+      images: [
+        new URL('./assets/images/Laan/1.jpg', import.meta.url).href,
+        new URL('./assets/images/Laan/2.jpg', import.meta.url).href,
+        new URL('./assets/images/Laan/3.jpg', import.meta.url).href,
+      ],
+      title: 'Residence LaanLom',
+      location: ' Bangkok, Thailand',
+      year: '2025',
+      description: `
+          Area : 700 sq.m
+          Architects : Puen-din Architects
+          Construction : T84 Construction
+        `,
+      status: 'IN_PROCESS'
+    },
+    {
+      img: new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
+      images: [
+        new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
+      ],
+      title: 'Residence SR11 Rama Nine',
+      location: 'Bangkok, Thailand',
+      year: '2025',
+      description: `
+          Area : 288 sq.m
+          Architects : ONE AND A HALF CO.LTD
+          Construction : T84 Construction
+        `,
+      status: 'IN_PROCESS'
+    },
+    {
+      img: new URL('./assets/images/baan-khun-film/1.jpg', import.meta.url).href,
+      images: [
+        new URL('./assets/images/baan-khun-film/1.jpg', import.meta.url).href,
+        new URL('./assets/images/baan-khun-film/2.jpg', import.meta.url).href,
+        new URL('./assets/images/baan-khun-film/3.jpg', import.meta.url).href,
+        new URL('./assets/images/baan-khun-film/4.jpg', import.meta.url).href,
+        new URL('./assets/images/baan-khun-film/5.jpg', import.meta.url).href,
+        new URL('./assets/images/baan-khun-film/6.jpg', import.meta.url).href,
+      ],
+      title: 'Residence Rangsit',
+      location: 'Phathumthani, Thailand',
+      year: '2025',
+      description: `
+          Area : 530 sq.m
+          Architects : 4504 Architect studio
+          Construction : T84 Construction
+        `,
+      status: 'IN_PROCESS'
+    },
+    {
+      img: bn9Image1,
+      images: [bn9Image1, ...bn9GalleryImages],
+      title: 'Residence BN9',
+      location: 'Bangkok, Thailand',
+      year: '2025',
+      description: `
+          Area : 883 sq.m
+          Architects : ONE AND A HALF ARCHITECT CO.LTD
+          Construction : T84 Construction
+        `,
+      status: 'FINISHED'
+    },
+    {
+      img: new URL('./assets/images/Croco/2.jpg', import.meta.url).href,
+      images: [
+        new URL('./assets/images/Croco/2.jpg', import.meta.url).href,
+        new URL('./assets/images/Croco/3.jpg', import.meta.url).href,
+        new URL('./assets/images/Croco/4.jpg', import.meta.url).href,
+        new URL('./assets/images/Croco/5.jpg', import.meta.url).href,
+        new URL('./assets/images/Croco/6.jpg', import.meta.url).href,
+        new URL('./assets/images/Croco/7.jpg', import.meta.url).href,
+        new URL('./assets/images/Croco/8.jpg', import.meta.url).href,
+        new URL('./assets/images/Croco/9.jpg', import.meta.url).href,
+        new URL('./assets/images/Croco/10.jpg', import.meta.url).href,
+      ],
+      title: 'Croco Office',
+      location: 'Rama Nine, Thailand',
+      year: '2025',
+      description: `
+          Area : 115 sq.m
+          Owner : Croco International
+          Architects : T84 Construction
+          Construction : T84 Construction
+        `,
+      status: 'FINISHED'
+    },
+    {
+      img: new URL('./assets/images/Pakchong/1.jpg', import.meta.url).href,
+      images: [
+        new URL('./assets/images/Pakchong/1.jpg', import.meta.url).href,
+        new URL('./assets/images/Pakchong/2 (2).jpg', import.meta.url).href,
+        new URL('./assets/images/Pakchong/2.jpg', import.meta.url).href,
+        new URL('./assets/images/Pakchong/1 (4).jpg', import.meta.url).href,
+        new URL('./assets/images/Pakchong/3 (2).jpg', import.meta.url).href,
+        new URL('./assets/images/Pakchong/4 (2).jpg', import.meta.url).href,
+        new URL('./assets/images/Pakchong/5 (2).jpg', import.meta.url).href,
+        new URL('./assets/images/Pakchong/7 (2).jpg', import.meta.url).href,
+        new URL('./assets/images/Pakchong/9 (2).jpg', import.meta.url).href,
+      ],
+      title: 'Residence Pakchong',
+      location: 'Rama Nine, Thailand',
+      year: '2025',
+      description: `
+          Area : 680 sq.m
+          Architects : ขาล
+          Construction : T84 Construction
+        `,
+      status: 'FINISHED'
+    },
+  ],
+  RENOVATE: [
+    {
+      img: new URL('./assets/images/Ohm/1.jpg', import.meta.url).href,
+      images: [
+        new URL('./assets/images/Ohm/1.jpg', import.meta.url).href,
+      ],
+      title: 'Renovate Pattanakarn',
+      location: 'Pattanakarn, Thailand',
+      year: '2025',
+      description: `
+          Area : 192 sq.m
+          Construction : T84 Construction
+        `,
+      status: 'FINISHED'
+    },
+    {
+      img: new URL('./assets/images/Omakase/1.jpg', import.meta.url).href,
+      images: [
+        new URL('./assets/images/Omakase/1.jpg', import.meta.url).href,
+      ],
+      title: 'Renovate Omakase',
+      location: 'Onnut, Thailand',
+      year: '2025',
+      description: `
+          Area : 50 sq.m
+          Architects : T84 Construction
+          Construction: T84 Construction
+        `,
+      status: 'FINISHED'
+    },
+    {
+      img: new URL('./assets/images/Auto/1.jpg', import.meta.url).href,
+      images: [
+        new URL('./assets/images/Auto/1.jpg', import.meta.url).href,
+        new URL('./assets/images/Auto/2.jpg', import.meta.url).href,
+        new URL('./assets/images/Auto/3.jpg', import.meta.url).href,
+        new URL('./assets/images/Auto/4.jpg', import.meta.url).href,
+        new URL('./assets/images/Auto/5.jpg', import.meta.url).href,
+        new URL('./assets/images/Auto/6.jpg', import.meta.url).href,
+      ],
+      title: 'Renovate Autowerks Asia Rama4',
+      location: 'Rama 4, Bangkok',
+      year: '2022',
+      description: `
+          Area : 100 sq.m
+          Owner : Autowroks Asia Bangkok
+          Architects : T84 Construction
+          Construction : T84 Construction
+        `,
+      status: 'FINISHED'
+    },
+  ],
+  DESIGN: []
+};
 
 function App() {
   const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    projectDetails: ''
-  });
-  const [activeCategory, setActiveCategory] = useState<'BUILD' | 'RENOVATE' | 'DESIGN'>('BUILD');
+  const [activeCategory, setActiveCategory] = useState<ProjectCategory>('BUILD');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMessageSent, setIsMessageSent] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<null | typeof projectCategories[keyof typeof projectCategories][0]>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [projectSlideIndex, setProjectSlideIndex] = useState(0);
+  const [projectsPerSlide, setProjectsPerSlide] = useState(3);
+  const [activeSection, setActiveSection] = useState('home');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    console.log('Input change detected:', { name, value });
-    
-    // Map form field names to state property names
-    const fieldNameMap: Record<string, keyof typeof formData> = {
-      'user_name': 'name',
-      'user_email': 'email',
-      'user_phone': 'phone',
-      'message': 'projectDetails'
-    };
-    
-    const stateKey = fieldNameMap[name] || name;
-    console.log('Using state key:', stateKey);
-    
-    setFormData(prev => {
-      const newState = {
-        ...prev,
-        [stateKey]: value
-      };
-      console.log('New form state:', newState);
-      return newState;
-    });
-  };
+  const navItems = ['home', 'services', 'projects', 'about', 'contact'] as const;
 
   const form = useRef<HTMLFormElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted');
-    
-    // Set loading state
     setIsMessageSent(true);
-    
-    // Send email using EmailJS
+
     if (form.current) {
-      console.log('Form reference exists, sending email...');
-      
-      // Log form data for debugging
-      const formElement = form.current as HTMLFormElement;
-      const formData = new FormData(formElement);
-      console.log('Form data:', Object.fromEntries(formData.entries()));
-      
-      // EmailJS configuration
-      // IMPORTANT: Make sure you have created a template in EmailJS with variables:
-      // {{user_name}}, {{user_email}}, {{user_phone}}, {{message}}, and {{to_email}}
+      const formElement = form.current;
       emailjs.sendForm(
-        'service_kb2z4ar', // Your EmailJS service ID - this looks correct
-        'template_bysyot9', // ERROR: You MUST replace this with your actual template ID from EmailJS dashboard
+        'service_kb2z4ar',
+        'template_bysyot9',
         form.current,
-        'rrXiMhXAGaSua329z' // Your EmailJS public key - this looks correct
+        'rrXiMhXAGaSua329z'
       )
-      .then((result) => {
-        console.log('Email sent successfully:', result.text);
-        
-        // Reset form
-        formElement.reset();
-        
-        // Keep success message visible for 3 seconds
-        setTimeout(() => {
+        .then(() => {
+          formElement.reset();
+          setTimeout(() => setIsMessageSent(false), 3000);
+        })
+        .catch((error) => {
+          console.error('Failed to send email:', error);
           setIsMessageSent(false);
-        }, 3000);
-      })
-      .catch((error) => {
-        console.error('Failed to send email:', error.text);
-        setIsMessageSent(false);
-        alert('Failed to send email. Please try again later.');
-      });
+          alert('Failed to send email. Please try again later.');
+        });
     } else {
-      console.error('Form reference is null');
       setIsMessageSent(false);
     }
   };
 
   useEffect(() => {
-    const handleScroll = () => {
+    const sectionIds = ['services', 'projects', 'about', 'contact'];
+
+    const updateScrollState = () => {
       setScrollY(window.scrollY);
+
+      const scrollPosition = window.scrollY + 80;
+      let current = 'home';
+
+      for (const id of sectionIds) {
+        const element = document.getElementById(id);
+        if (element && scrollPosition >= element.offsetTop) {
+          current = id;
+        }
+      }
+
+      setActiveSection(current);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    updateScrollState();
+    window.addEventListener('scroll', updateScrollState, { passive: true });
+    return () => window.removeEventListener('scroll', updateScrollState);
   }, []);
+
+  useEffect(() => {
+    const updatePerSlide = () => {
+      const width = window.innerWidth;
+      setProjectsPerSlide(width < 640 ? 1 : width < 1024 ? 2 : 3);
+    };
+
+    updatePerSlide();
+    window.addEventListener('resize', updatePerSlide);
+    return () => window.removeEventListener('resize', updatePerSlide);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
 
   const scrollToSection = (id: string) => {
     setIsMobileMenuOpen(false);
+    setActiveSection(id);
     if (id === 'home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -130,222 +314,33 @@ function App() {
 
   const handleCategoryChange = (category: string) => {
     setIsTransitioning(true);
+    setProjectSlideIndex(0);
     setActiveCategory(category as 'BUILD' | 'RENOVATE' | 'DESIGN');
     setTimeout(() => setIsTransitioning(false), 300); // Match this with the transition duration
   };
 
-  const projectCategories = {
-    BUILD: [
-      { 
-        img: new URL('./assets/images/Laan/1.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/Laan/1.jpg', import.meta.url).href,
-          new URL('./assets/images/Laan/2.jpg', import.meta.url).href,
-          new URL('./assets/images/Laan/3.jpg', import.meta.url).href,
-        ],
-        title: 'Residence LaanLom',
-        location: ' Bangkok, Thailand',
-        year: '2025',
-        description: `
-          Area : 700 sq.m
-          Architects : Puen-din Architects
-          Construction : T84 Construction
-        `,
-        status: 'IN_PROCESS'
-      },
-      { 
-        img: new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/rama9/1.jpg', import.meta.url).href,
-        ],
-        title: 'Residence SR11 Rama Nine',
-        location: 'Bangkok, Thailand',
-        year: '2025',
-        description: `
-          Area : 288 sq.m
-          Architects : ONE AND A HALF CO.LTD
-          Construction : T84 Construction
-        `,
-        status: 'IN_PROCESS'
-      },
-      { 
-        img: new URL('./assets/images/baan-khun-film/1.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/baan-khun-film/1.jpg', import.meta.url).href,
-          new URL('./assets/images/baan-khun-film/2.jpg', import.meta.url).href,
-          new URL('./assets/images/baan-khun-film/3.jpg', import.meta.url).href,
-          new URL('./assets/images/baan-khun-film/4.jpg', import.meta.url).href,
-          new URL('./assets/images/baan-khun-film/5.jpg', import.meta.url).href,
-          new URL('./assets/images/baan-khun-film/6.jpg', import.meta.url).href,
-        ],
-        title: 'Residence Rangsit',
-        location: 'Phathumthani, Thailand',
-        year: '2025',
-        description: `
-          Area : 530 sq.m
-          Architects : 4504 Architect studio
-          Construction : T84 Construction
-        `,
-        status: 'IN_PROCESS'
-      },
-      { 
-        img: bn9Image1,
-        images: [
-          bn9Image1,
-          bn9Image2,
-          bn9Image3,
-          bn9Image5,
-          bn9Image6,
-          bn9Image7,
-          bn9Image8,
-          bn9Image9,
-          bn9Image10,
-          bn9Image11,
-          bn9Image12,
-          bn9Image13,
-          bn9Image14,
-        ],
-        title: 'Residence BN9',
-        location: 'Bangkok, Thailand',
-        year: '2025',
-        description: `
-          Area : 883 sq.m
-          Architects : ONE AND A HALF ARCHITECT CO.LTD
-          Construction : T84 Construction
-        `,
-        status: 'IN_PROCESS'
-      },
-      { 
-        img: new URL('./assets/images/Ladkrabang/1.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/Ladkrabang/1.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/2.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/3.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/4.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/5.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/6.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/7.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/8.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/9.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/10.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/11.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/12.jpg', import.meta.url).href,
-          new URL('./assets/images/Ladkrabang/13.jpg', import.meta.url).href,
-        ],
-        title: 'Residence Ladkrabang',
-        location: 'Ladkrabang, Thailand',
-        year: '2025',
-        description: `
-          Area : 1080 sq.m
-          Construction : T84 Construction
-        `,
-        status: 'IN_PROCESS'
-      },
-      { 
-        img: new URL('./assets/images/Croco/2.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/Croco/2.jpg', import.meta.url).href,
-          new URL('./assets/images/Croco/3.jpg', import.meta.url).href,
-          new URL('./assets/images/Croco/4.jpg', import.meta.url).href,
-          new URL('./assets/images/Croco/5.jpg', import.meta.url).href,
-          new URL('./assets/images/Croco/6.jpg', import.meta.url).href,
-          new URL('./assets/images/Croco/7.jpg', import.meta.url).href,
-          new URL('./assets/images/Croco/8.jpg', import.meta.url).href,
-          new URL('./assets/images/Croco/9.jpg', import.meta.url).href,
-          new URL('./assets/images/Croco/10.jpg', import.meta.url).href,
-        ],
-        title: 'Croco Office',
-        location: 'Rama Nine, Thailand',
-        year: '2025',
-        description: `
-          Area : 115 sq.m
-          Owner : Croco International
-          Architects : T84 Construction
-          Construction : T84 Construction
-        `,
-        status: 'FINISHED'
-      },
-      { 
-        img: new URL('./assets/images/Pakchong/1.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/Pakchong/1.jpg', import.meta.url).href,
-          new URL('./assets/images/Pakchong/2 (2).jpg', import.meta.url).href,
-          new URL('./assets/images/Pakchong/2.jpg', import.meta.url).href,
-          new URL('./assets/images/Pakchong/1 (4).jpg', import.meta.url).href,
-          new URL('./assets/images/Pakchong/3 (2).jpg', import.meta.url).href,
-          new URL('./assets/images/Pakchong/4 (2).jpg', import.meta.url).href,
-          new URL('./assets/images/Pakchong/5 (2).jpg', import.meta.url).href,
-          new URL('./assets/images/Pakchong/7 (2).jpg', import.meta.url).href,
-          new URL('./assets/images/Pakchong/9 (2).jpg', import.meta.url).href,
-        ],
-        title: 'Residence Pakchong',
-        location: 'Rama Nine, Thailand',
-        year: '2025',
-        description: `
-          Area : 680 sq.m
-          Architects : ขาล
-          Construction : T84 Construction
-        `,
-        status: 'FINISHED'
-      },
-      
-    ],
-    RENOVATE: [
-      { 
-        img: new URL('./assets/images/Ohm/1.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/Ohm/1.jpg', import.meta.url).href,
-        ],
-        title: 'Renovate Pattanakarn',
-        location: 'Pattanakarn, Thailand',
-        year: '2025',
-        description: `
-          Area : 192 sq.m
-          Construction : T84 Construction
-        `,
-        status: 'FINISHED'
-      },
-      { 
-        img: new URL('./assets/images/Omakase/1.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/Omakase/1.jpg', import.meta.url).href,
-        ],
-        title: 'Renovate Omakase',
-        location: 'Onnut, Thailand',
-        year: '2025',
-        description: `
-          Area : 50 sq.m
-          Architects : T84 Construction
-          Construction: T84 Construction
-        `,
-        status: 'FINISHED'
-      },
-      { 
-        img: new URL('./assets/images/Auto/1.jpg', import.meta.url).href,
-        images: [
-          new URL('./assets/images/Auto/1.jpg', import.meta.url).href,
-          new URL('./assets/images/Auto/2.jpg', import.meta.url).href,
-          new URL('./assets/images/Auto/3.jpg', import.meta.url).href,
-          new URL('./assets/images/Auto/4.jpg', import.meta.url).href,
-          new URL('./assets/images/Auto/5.jpg', import.meta.url).href,
-          new URL('./assets/images/Auto/6.jpg', import.meta.url).href,
-        ],
-        title: 'Renovate Autowerks Asia Rama4',
-        location: 'Rama 4, Bangkok',
-        year: '2022',
-        description: `
-          Area : 100 sq.m
-          Owner : Autowroks Asia Bangkok
-          Architects : T84 Construction
-          Construction : T84 Construction
-        `,
-        status: 'FINISHED'
-      },
-    ],
-    DESIGN: [
-     
-    ]
-  };
+  const sortedProjects = useMemo(
+    () =>
+      [...projectCategories[activeCategory]].sort(
+        (a, b) => (a.status === 'FINISHED' ? 1 : 0) - (b.status === 'FINISHED' ? 1 : 0)
+      ),
+    [activeCategory]
+  );
+  const totalProjectSlides = Math.max(1, Math.ceil(sortedProjects.length / projectsPerSlide));
+
+  useEffect(() => {
+    setProjectSlideIndex((prev) => Math.min(prev, totalProjectSlides - 1));
+  }, [totalProjectSlides]);
+
+  useEffect(() => {
+    if (totalProjectSlides <= 1) return;
+
+    const interval = setInterval(() => {
+      setProjectSlideIndex((prev) => (prev + 1) % totalProjectSlides);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [activeCategory, totalProjectSlides]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -361,7 +356,7 @@ function App() {
       </Helmet>
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 bg-white z-50 border-b">
+      <nav className="fixed top-0 left-0 right-0 bg-white z-[100] border-b">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
@@ -371,14 +366,20 @@ function App() {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-8">
-              {['home', 'services', 'projects', 'about', 'contact'].map((item) => (
+              {navItems.map((item) => (
                 <button
                   key={item}
                   onClick={() => scrollToSection(item)}
-                  className="text-gray-600 hover:text-blue-600 capitalize transition-colors relative group"
+                  className={`capitalize transition-colors relative group py-1 ${
+                    activeSection === item ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'
+                  }`}
                 >
                   {item}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+                  <span
+                    className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${
+                      activeSection === item ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`}
+                  />
                 </button>
               ))}
             </div>
@@ -393,18 +394,34 @@ function App() {
           </div>
 
           {/* Mobile Navigation */}
-          <div 
-            className={`md:hidden fixed inset-0 bg-white/80 backdrop-blur-sm transform transition-transform duration-300 ease-in-out ${
-              isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          <div
+            className={`md:hidden fixed inset-0 top-16 z-40 ${
+              isMobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
             }`}
           >
-            <div className="h-full w-full max-w-sm bg-white shadow-lg p-6 pt-20">
-              <div className="flex flex-col space-y-6">
-                {['home', 'services', 'projects', 'about', 'contact'].map((item) => (
+            <div
+              className={`absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
+                isMobileMenuOpen ? 'opacity-100' : 'opacity-0'
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+
+            <div
+              className={`absolute top-0 left-0 h-full w-full max-w-sm bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
+                isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+              }`}
+            >
+              <div className="p-6 pt-8 flex flex-col space-y-6">
+                {navItems.map((item) => (
                   <button
                     key={item}
                     onClick={() => scrollToSection(item)}
-                    className="text-gray-600 hover:text-blue-600 capitalize transition-colors text-lg py-2 flex items-center gap-3"
+                    className={`capitalize transition-colors text-lg py-2 flex items-center gap-3 border-l-4 pl-3 ${
+                      activeSection === item
+                        ? 'text-blue-600 border-blue-600 font-semibold'
+                        : 'text-gray-600 hover:text-blue-600 border-transparent'
+                    }`}
                   >
                     {item === 'home' && <Home className="h-5 w-5" />}
                     {item === 'services' && <Settings className="h-5 w-5" />}
@@ -421,7 +438,7 @@ function App() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 w-full h-full"
           style={{
@@ -434,8 +451,8 @@ function App() {
         <div className="absolute inset-0 bg-black/40"></div>
         <div className="relative z-10 max-w-6xl mx-auto px-4">
           <div className="text-center text-white">
-            <h1 className="text-6xl font-bold mb-6">T84 CONSTRUCTION</h1>
-            <p className="text-xl mb-8 text-gray-200 max-w-2xl mx-auto">The Beginning Of A Great Construction.</p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 break-words">T84 CONSTRUCTION</h1>
+            <p className="text-lg sm:text-xl mb-8 text-gray-200 max-w-2xl mx-auto">The Beginning Of A Great Construction.</p>
             <button 
               onClick={() => scrollToSection('projects')}
               className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors"
@@ -447,19 +464,28 @@ function App() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-gray-50">
+      <section id="services" className="py-24 bg-gray-50 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Our Services</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="text-center mb-16">
+            <span className="text-blue-600 font-semibold tracking-widest uppercase text-sm">What We Do</span>
+            <h2 className="text-3xl md:text-4xl font-bold mt-3">Our Services</h2>
+            <div className="w-20 h-1 bg-blue-600 rounded-full mx-auto mt-5"></div>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { icon: <Building2 className="h-8 w-8" />, title: 'Construction', desc: 'State-of-the-art commercial buildings and facilities' },
               { icon: <Crane className="h-8 w-8" />, title: 'Renovate', desc: 'Large-scale industrial construction solutions' },
               { icon: <Users className="h-8 w-8" />, title: 'Design', desc: 'Custom homes and residential complexes' }
             ].map((service, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="text-blue-600 mb-4">{service.icon}</div>
-                <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-                <p className="text-gray-600">{service.desc}</p>
+              <div
+                key={index}
+                className="group bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-blue-50 text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                  {service.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{service.desc}</p>
               </div>
             ))}
           </div>
@@ -467,9 +493,13 @@ function App() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-20">
+      <section id="projects" className="py-24 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Featured Projects</h2>
+          <div className="text-center mb-12">
+            <span className="text-blue-600 font-semibold tracking-widest uppercase text-sm">Our Work</span>
+            <h2 className="text-3xl md:text-4xl font-bold mt-3">Featured Projects</h2>
+            <div className="w-20 h-1 bg-blue-600 rounded-full mx-auto mt-5"></div>
+          </div>
           
           {/* Category Selection */}
           <div className="flex justify-center mb-12">
@@ -486,54 +516,87 @@ function App() {
             </div>
           </div>
 
-          {/* Projects Grid */}
-          <div className="relative">
-            <div className="overflow-x-auto pb-8 -mx-4 px-4 hide-scrollbar">
-              <div 
-                className={`flex gap-6 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
-                style={{ minWidth: 'max-content' }}
+          {/* Projects Carousel */}
+          {sortedProjects.length === 0 ? (
+            <div className="text-center text-gray-500 py-16">
+              <FolderOpen className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg">Coming soon</p>
+            </div>
+          ) : (
+          <div className={`relative transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="overflow-hidden">
+              <div
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${projectSlideIndex * 100}%)` }}
               >
-                {projectCategories[activeCategory].map((project, index) => (
-                  <div 
-                    key={index}
-                    className="w-[300px] bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => {
-                      setSelectedProject(project);
-                      setIsModalOpen(true);
-                    }}
+                {Array.from({ length: totalProjectSlides }).map((_, slideIndex) => (
+                  <div
+                    key={slideIndex}
+                    className="w-full flex-shrink-0 grid gap-6"
+                    style={{ gridTemplateColumns: `repeat(${projectsPerSlide}, minmax(0, 1fr))` }}
                   >
-                    <div className="aspect-video relative overflow-hidden">
-                      <img
-                        src={project.img}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                      <span
-                        className={`absolute bottom-4 right-4 px-3 py-1 rounded-full text-sm font-semibold ${project.status === 'FINISHED' ? 'bg-green-500 text-white' : 'bg-amber-500 text-white'}`}
-                      >
-                        {project.status === 'FINISHED' ? 'Finished' : 'In Process'}
-                      </span>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-                      <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {project.location}
+                    {sortedProjects
+                      .slice(slideIndex * projectsPerSlide, slideIndex * projectsPerSlide + projectsPerSlide)
+                      .map((project) => (
+                        <div
+                          key={project.title}
+                          className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                          onClick={() => {
+                            setSelectedProject(project);
+                            setIsModalOpen(true);
+                          }}
+                        >
+                          <div className="aspect-video relative overflow-hidden">
+                            <img
+                              src={project.img}
+                              alt={project.title}
+                              className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                            <span
+                              className={`absolute bottom-4 right-4 px-3 py-1 rounded-full text-sm font-semibold ${project.status === 'FINISHED' ? 'bg-green-500 text-white' : 'bg-amber-500 text-white'}`}
+                            >
+                              {project.status === 'FINISHED' ? 'Finished' : 'In Process'}
+                            </span>
+                          </div>
+                          <div className="p-6">
+                            <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
+                            <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
+                              <div className="flex items-center gap-1">
+                                <MapPin className="h-4 w-4" />
+                                {project.location}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-4 w-4" />
+                                {project.year}
+                              </div>
+                            </div>
+                            <p className="text-gray-600 whitespace-pre-line">{project.description}</p>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          {project.year}
-                        </div>
-                      </div>
-                      <p className="text-gray-600 whitespace-pre-line">{project.description}</p>
-                    </div>
+                      ))}
                   </div>
                 ))}
               </div>
             </div>
+
+            {totalProjectSlides > 1 && (
+              <div className="flex justify-center gap-2 mt-8">
+                {Array.from({ length: totalProjectSlides }).map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    aria-label={`Go to slide ${index + 1}`}
+                    onClick={() => setProjectSlideIndex(index)}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      index === projectSlideIndex ? 'w-8 bg-blue-600' : 'w-2.5 bg-gray-300 hover:bg-gray-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
+          )}
         </div>
       </section>
 
@@ -546,30 +609,40 @@ function App() {
       )}
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-white">
+      <section id="about" className="py-24 bg-white scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold mb-6">About T84 Construction</h2>
-            <p className="text-gray-600 mb-6">
-            T84 Construction Co., Ltd. was established in 2015 with the objective of providing comprehensive construction services. The company specializes in building construction, infrastructure works, as well as renovation and interior decoration.
-              </p>
-              <p className="text-gray-600 mb-8">
-Over the past 10 years, the company has accumulated extensive experience and expertise across a wide range of construction projects. We are committed to upholding professional management standards to meet the diverse needs of our clients, guided by the core principles of “Quality Standards, On-Time Delivery, and Customer Satisfaction at Heart.”
-              </p>
-              <p className="text-gray-600 mb-8">
-              With a highly experienced and capable team, we are dedicated to delivering excellence in every project we undertake.              </p>
-    
+          <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Image */}
+            <div className="relative order-last md:order-first">
+              <div className="absolute -top-4 -left-4 w-24 h-24 border-t-4 border-l-4 border-blue-600 rounded-tl-2xl hidden sm:block"></div>
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 border-b-4 border-r-4 border-blue-600 rounded-br-2xl hidden sm:block"></div>
+              <img
+                src={aboutImage}
+                alt="T84 Construction site"
+                className="w-full h-[420px] object-cover rounded-2xl shadow-lg relative z-10"
+              />
             </div>
-            <div className="relative">
-            
+
+            {/* Text */}
+            <div>
+              <span className="text-blue-600 font-semibold tracking-widest uppercase text-sm">Who We Are</span>
+              <h2 className="text-3xl md:text-4xl font-bold mt-3 mb-6">About T84 Construction</h2>
+              <p className="text-gray-600 leading-relaxed mb-5">
+                T84 Construction Co., Ltd. was established in 2015 with the objective of providing comprehensive construction services. The company specializes in building construction, infrastructure works, as well as renovation and interior decoration.
+              </p>
+              <p className="text-gray-600 leading-relaxed mb-6">
+                Over the past 10 years, we have accumulated extensive experience across a wide range of construction projects, guided by the core principles of “Quality Standards, On-Time Delivery, and Customer Satisfaction at Heart.”
+              </p>
+              <p className="text-gray-600 leading-relaxed">
+                With a highly experienced and capable team, we are dedicated to delivering excellence in every project we undertake.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 bg-gray-50 relative z-[60]">
+      <section id="contact" className="py-20 bg-gray-50 relative z-[60] scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16">
             {/* Contact Information */}
@@ -672,7 +745,6 @@ Over the past 10 years, the company has accumulated extensive experience and exp
                       name="user_name"
                       type="text"
                       required
-                      defaultValue={formData.name}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-200"
                       aria-label="Your name"
                   />
@@ -684,7 +756,6 @@ Over the past 10 years, the company has accumulated extensive experience and exp
                       name="user_email"
                       type="email"
                       required
-                      defaultValue={formData.email}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-200"
                       aria-label="Your email address"
                     />
@@ -696,7 +767,6 @@ Over the past 10 years, the company has accumulated extensive experience and exp
                       name="user_phone"
                       type="tel"
                       required
-                      defaultValue={formData.phone}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-200"
                       aria-label="Your phone number"
                     />
@@ -708,7 +778,6 @@ Over the past 10 years, the company has accumulated extensive experience and exp
                       name="message"
                       rows={5}
                       required
-                      defaultValue={formData.projectDetails}
                       className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none transition-all duration-200"
                       aria-label="Your project details"
                 ></textarea>
